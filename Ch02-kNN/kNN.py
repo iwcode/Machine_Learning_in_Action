@@ -48,7 +48,7 @@ def file_to_matrix(file_name):
     for line in array_of_lines:
         line = line.strip()
         list_from_line = line.split('\t')
-        return_mat[index, :] = list_from_line[0 : 3]
+        return_mat[index, :] = list_from_line[0: 3]
         class_label_vector.append(int(list_from_line[-1]))
         index += 1
     return return_mat, class_label_vector
