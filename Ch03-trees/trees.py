@@ -74,7 +74,7 @@ def majority_cnt(class_list):
     return sorted_class_count[0][0]
 
 
-def creat_tree(data_set, labels):
+def create_tree(data_set, labels):
     class_list = [example[-1] for example in data_set]
     if class_list.count(class_list[0]) == len(class_list):
         return class_list[0]
@@ -88,8 +88,34 @@ def creat_tree(data_set, labels):
     unique_values = set(feat_values)
     for value in unique_values:
         sub_labels = labels[:]
-        my_tree[best_feat_label][value] = creat_tree(
+        my_tree[best_feat_label][value] = create_tree(
             split_data_set(data_set, best_feat, value), sub_labels)
     return my_tree
 
 
+def classify(input_tree, feat_labels, test_vec):
+    first_str = list(input_tree.keys())[0]
+    second_dict = input_tree[first_str]
+    feat_index = feat_labels.index(first_str)
+    for key in second_dict.keys():
+        if test_vec[feat_index] == key:
+            if type(second_dict[key]).__name__ == 'dict':
+                class_label = classify(second_dict[key], feat_labels, test_vec)
+            else:
+                class_label = second_dict[key]
+    return class_label
+
+
+def store_tree(input_tree, filename):
+    import pickle
+    fw = open(filename, 'wb')  # python3不能用'w'参数写入二进制。
+    # Python3给open函数添加了名为encoding的新参数，而这个新参数的默认值却是‘utf-8’。
+    # 这样在文件句柄上进行read和write操作时，系统就要求开发者必须传入包含Unicode字符的实例，而不接受包含二进制数据的bytes实例。
+    pickle.dump(input_tree, fw)
+    fw.close()
+
+
+def grab_tree(filename):
+    import pickle
+    fr = open(filename, 'rb')
+    return pickle.load(fr)
